@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vinit Ghodekar Portfolio</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 4.7 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+
+  <style>
+    :root {
+      --primary-color: #000;
+      --secondary-color: #333;
+      --accent-color: #0077b5;
+      --text-color: #333;
+      --light-bg: #fff;
+      --dark-bg: #0d0d0d;
+      --font-main: 'Montserrat', sans-serif;
+      --font-heading: 'Playfair Display', serif;
+      --transition-speed: 0.3s;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--light-bg);
+      color: var(--text-color);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px clamp(20px, 5vw, 50px);
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-weight: 600;
+      font-size: clamp(18px, 4vw, 20px);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-links a {
+      margin: 0 5px;
+      text-decoration: none;
+      color: var(--primary-color);
+      padding: 8px clamp(8px, 2vw, 15px);
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      font-size: clamp(12px, 2.5vw, 14px);
+      transition: all var(--transition-speed) ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-links a:hover {
+      background-color: var(--primary-color);
+      color: var(--light-bg);
+      transform: scale(1.05);
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background: var(--primary-color);
+      transition: width var(--transition-speed) ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 80%;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .social-icons a {
+      font-size: clamp(16px, 4vw, 18px);
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .social-icons a:hover {
+      color: var(--accent-color);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      padding: 60px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-grow: 1;
+    }
+
+    .outline-text {
+      font-family: var(--font-heading);
+      font-size: clamp(40px, 10vw, 130px);
+      font-weight: 700;
+      color: black;
+      -webkit-text-stroke: 2px var(--primary-color);
+      position: absolute;
+      top: -1px;
+      left: 25%;
+      margin: 0 auto;
+      z-index: 1;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .hero-text p {
+      max-width: min(300px, 90%);
+      font-size: clamp(14px, 3vw, 20px);
+      line-height: 1.4;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .hero-image {
+      position: relative;
+      width: clamp(200px, 60vw, 350px);
+      height: clamp(200px, 60vw, 350px);
+      margin: 30px auto;
+      z-index: 2;
+    }
+
+    .hero-image::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: #ccc;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .skills {
+      position: relative;
+      font-size: clamp(30px, 6vw, 60px);
+      margin: 40px auto;
+      text-align: center;
+      width: 100%;
+    }
+
+    .skills ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .skills li {
+      font-size: clamp(14px, 3vw, 20px);
+      margin: 5px;
+    }
+
+    /* About Section */
+    .about-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 60px clamp(20px, 5vw, 50px);
+    }
+
+    .left-panel, .right-panel {
+      flex: 1 1 300px;
+    }
+
+    .toggle-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .toggle-buttons button {
+      padding: 8px 16px;
+      border: 1px solid #aaa;
+      background: var(--light-bg);
+      color: var(--text-color);
+      cursor: pointer;
+      border-radius: 20px;
+      font-size: 12px;
+      transition: all var(--transition-speed) ease;
+    }
+
+    .toggle-buttons button.active,
+    .toggle-buttons button:hover {
+      background: var(--secondary-color);
+      color: var(--light-bg);
+    }
+
+    .skill {
+      margin-bottom: 15px;
+    }
+
+    .skill-name {
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .progress-bar {
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 10px;
+      width: 100%;
+    }
+
+    .progress-fill {
+      background: var(--secondary-color);
+      height: 100%;
+      width: 0;
+      transition: width 0.5s ease;
+    }
+
+    .percentage {
+      font-size: 12px;
+      float: right;
+    }
+
+    .right-panel h1 {
+      font-size: clamp(40px, 10vw, 120px);
+      margin-bottom: 20px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .right-panel p {
+      font-size: clamp(12px, 2vw, 14px);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Services Section */
+    .services {
+      position: relative;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .outline-title {
+      font-size: clamp(40px, 10vw, 100px);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--primary-color);
+      margin: 0;
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.5;
+      z-index: 0;
+    }
+
+    .bold-title {
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 900;
+      margin: 25px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .description {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-size: clamp(10px, 2vw, 12px);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-color);
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .service-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(280px, 80vw, 400px);
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      padding: 15px 20px;
+      transition: all var(--transition-speed) ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .service-item:hover {
+      background-color: var(--primary-color);
+      color: var(--light-bg);
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .number {
+      position: absolute;
+      left: -40px;
+      font-size: 12px;
+      width: 30px;
+      height: 30px;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--light-bg);
+      transition: all var(--transition-speed) ease;
+    }
+
+    .service-item:hover .number {
+      background-color: var(--light-bg);
+      color: var(--primary-color);
+    }
+
+    .service-name {
+      font-size: clamp(14px, 3vw, 16px);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    /* Projects Section */
+    .projects-section {
+      max-width: 1200px;
+      margin: auto;
+      padding: 50px 20px;
+    }
+
+    .projects-header {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .projects-header h1 {
+      font-family: 'Copperplate Gothic Bold', sans-serif;
+      font-size: clamp(40px, 10vw, 120px);
+      margin: 0;
+      flex: 1 1 50%;
+      line-height: 1;
+    }
+
+    .projects-header p {
+      flex: 1 1 40%;
+      font-size: clamp(14px, 3vw, 20px);
+      line-height: 1.6;
+    }
+
+    .icon-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .icon-bar button {
+      padding: 8px 16px;
+      font-size: clamp(12px, 3vw, 18px);
+      border: 1px solid var(--primary-color);
+      background: none;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background var(--transition-speed) ease;
+    }
+
+    .icon-bar button:hover,
+    .icon-bar button.active {
+      background: var(--primary-color);
+      color: var(--light-bg);
+    }
+
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .project-card {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .project-card img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex: 1 1 300px;
+    }
+
+    .project-info {
+      flex: 1 1 300px;
+    }
+
+    .project-info h3 {
+      font-size: clamp(18px, 4vw, 25px);
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .project-info p {
+      font-size: clamp(13px, 2vw, 15px);
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .project-info a.project-btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 8px 16px;
+      font-size: clamp(14px, 2vw, 16px);
+      border: 1px solid var(--primary-color);
+      border-radius: 5px;
+      background-color: transparent;
+      color: inherit;
+      transition: background-color var(--transition-speed) ease;
+    }
+
+    .project-info a.project-btn:hover {
+      background-color: var(--primary-color);
+      color: var(--light-bg);
+    }
+
+    /* Contact Section */
+    .contact-section {
+      background-color: var(--light-bg);
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .contact-heading {
+      font-size: clamp(32px, 6vw, 48px);
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .contact-heading .outline {
+      font-size: clamp(40px, 10vw, 80px);
+      font-weight: 700;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--primary-color);
+      margin: 0;
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.5;
+      z-index: 0;
+    }
+
+    .contact-heading .solid {
+      font-size: clamp(24px, 5vw, 48px);
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: clamp(14px, 3vw, 18px);
+      color: var(--primary-color);
+      padding: 15px;
+    }
+
+    .contact-item img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .contact-item a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .contact-item a:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--dark-bg);
+      color: #e0e0e0;
+      padding: 40px 20px 20px;
+    }
+
+    .footer-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: auto;
+      gap: 30px;
+    }
+
+    .footer-left,
+    .footer-center,
+    .footer-rightt {
+      flex: 1 1 100%;
+      min-width: 250px;
+      margin: 10px 0;
+    }
+
+    .footer-logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: whitesmoke;
+    }
+
+    .footer-tagline {
+      font-size: 14px;
+      margin-top: 8px;
+      color: #bbb;
+    }
+
+    .footer-center h4,
+    .footer-rightt h4 {
+      margin-bottom: 15px;
+      color: #ffffff;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    .footer-center ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .footer-center ul li {
+      margin: 5px 0;
+    }
+
+    .footer-center ul li a {
+      color: #ccc;
+      text-decoration: none;
+      transition: 0.3s ease;
+    }
+
+    .footer-center ul li a:hover {
+      color: #00ffc3;
+    }
+
+    .social-iconss {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .social-iconss a {
+      color: #ccc;
+      font-size: 18px;
+      transition: 0.3s ease;
+    }
+
+    .social-iconss a:hover {
+      color: #00ffc3;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #222;
+      font-size: 14px;
+      color: #777;
+      margin-top: 20px;
+    }
+
+    /* Hamburger Menu */
+    .hamburger {
+      display: none;
+      cursor: pointer;
+      font-size: 24px;
+      color: var(--primary-color);
+      order: -1;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+      }
+
+      .nav-links, .social-icons {
+        display: none;
+        width: 100%;
+        margin-top: 15px;
+      }
+
+      .navbar.expanded .nav-links,
+      .navbar.expanded .social-icons {
+        display: flex;
+      }
+
+      .navbar.expanded {
+        padding-bottom: 15px;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .social-icons {
+        justify-content: center;
+        padding: 15px 0;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .logo {
+        margin-left: auto;
+        margin-right: auto;
+        order: 1;
+      }
+
+      .hero-text p {
+        position: static;
+        text-align: center;
+      }
+
+      .service-item {
+        margin-left: 30px;
+      }
+
+      .footer-center ul {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .hero-text p {
+        position: absolute;
+        right: clamp(20px, 5vw, 50px);
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: right;
+        margin: 0;
+      }
+
+      .skills {
+        position: absolute;
+        bottom: clamp(40px, 10vw, 80px);
+        left: clamp(20px, 5vw, 50px);
+        text-align: left;
+        margin: 0;
+      }
+
+      .skills ul {
+        justify-content: flex-start;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer-left,
+      .footer-center,
+      .footer-rightt {
+        text-align: left;
+      }
+
+      .footer-center ul {
+        justify-content: flex-start;
+      }
+
+      .social-iconss {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .about-section {
+        flex-wrap: nowrap;
+      }
+
+      .project-card {
+        flex-direction: row;
+      }
+
+      .project-card:nth-child(even) {
+        flex-direction: row-reverse;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .hero-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .hero-image {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        section {
+            padding: 80px 0;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+            color: var(--secondary-color);
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+        
+        /* Education Section */
+        .education-section {
+            background-color: white;
+        }
+        
+        .education-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .education-item {
+            flex-basis: calc(50% - 20px);
+            margin-bottom: 40px;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .education-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .education-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+        
+        .education-year {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .education-degree {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .education-institution {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .education-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        /* Experience Section */
+        .experience-section {
+            background-color: #f5f7fa;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 4px solid var(--primary-color);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            left: 50%;
+        }
+        
+        .left::after {
+            right: -12px;
+        }
+        
+        .right::after {
+            left: -12px;
+        }
+        
+        .timeline-content {
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .timeline-content:hover {
+            transform: translateY(-5px);
+        }
+        
+        .timeline-date {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .timeline-company {
+            color: var(--accent-color);
+            font-weight: 500;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        
+        .timeline-skills {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .skill-tag {
+            background: var(--light-color);
+            color: var(--secondary-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .education-item {
+                flex-basis: 100%;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item::after {
+                left: 21px;
+            }
+            
+            .left::after, .right::after {
+                left: 21px;
+            }
+            
+            .right {
+                left: 0;
+            }
+        }
+
+
+
+
+
+
+
+
+
+.hire-me-btn {
+  display: inline-block;
+  padding: 8px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000;
+  background-color: #fff;
+  border: 2px solid #000;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  width: 150px;
+  margin-top: 180px;
+  float: left;              /* Aligns it to the left */
+  margin-left: 1300px;        /* Adds spacing from the left edge */
+  z-index: 1;
+}
+
+.hire-me-btn:hover {
+  background-color: #000;
+  color: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hire-me-btn:active {
+  transform: scale(0.96);
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .hire-me-btn {
+    float: none;
+    display: block;
+    margin: 40px auto 0;
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .hire-me-btn {
+    width: 90%;
+    text-align: center;
+    font-size: 0.9rem;
+    padding: 10px;
+    margin: 20px auto;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+
+<div data-aos="fade-up" data-aos-delay="200">
+
+  <header class="navbar">
+    <div class="logo">VINIT GHODEKAR</div>
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#about">About Me</a>
+      <a href="#services">Services</a>
+      <a href="#projects">Projects</a>
+      <a href="Vinit Rajendra Ghodekar.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
+    </nav>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger">
+         ☰
+      </div>
+    <div class="social-icons">
+      <a href="www.linkedin.com/in/vinitghodekar" target="_blank" rel="noopener noreferrer"><i class="fa fa-linkedin"></i></a>
+      <a href="mailto:vinitghodekar08@gmail.com"><i class="fa fa-envelope"></i></a>
+      <a href="https://wa.me/918433984338" target="_blank" rel="noopener noreferrer"><i class="fa fa-whatsapp"></i></a>
+      <a href="tel:+918433984338"><i class="fa fa-phone"></i></a>
+    </div>
+    </div>
+
+
+  </header>
+<div data-aos="fade-up" data-aos-delay="200">
+  <section class="hero" id="home">
+    <h1 class="outline-text">EXPLORE MY<br>PORTFOLIO</h1>
+    <div class="hero-text">
+      <p>Helping Businesses Grow with Creative UI/UX and Custom Web Solutions.</p>
+    </div>
+    <a href="#contact" class="hire-me-btn">Hire Me</a>
+
+
+    <div class="hero-image">
+      <img src="vinit.png" alt="Vinit Ghodekar" />
+    </div>
+    <div class="skills">
+      <ul>
+  <li>UI UX</li>
+  <li>Web Design</li>
+  <li>Landing Page</li>
+  <li>Mobile App Design</li>
+  <li>Web Development</li>
+</ul>
+
+    </div>
+  </section>
+</div>
+
+
+<div data-aos="fade-up" data-aos-delay="200">
+  <section class="about-section" id="about">
+    <div class="left-panel">
+      <div class="toggle-buttons">
+        <button class="active" onclick="showSkills('uiux')">UI / UX</button>
+        <button onclick="showSkills('webdev')">Web Development</button>
+      </div>
+      <div id="skills-container">
+        <!-- Skills will load here -->
+      </div>
+    </div>
+    <div class="right-panel">
+      <h1>ABOUT</h1>
+      <p>Passionate about crafting clean, user-friendly interfaces. I blend creativity with usability to enhance user experience. Driven to design solutions that are both functional and visually appealing.</p>
+    </div>
+  </section>
+</div>
+
+ <!-- Education Section -->
+ <div data-aos="fade-up" data-aos-delay="200">
+    <section class="education-section">
+        <div class="container">
+            <h2>EDUCATION</h2>
+            <div class="education-container">
+                <div class="education-item">
+                    <div class="education-year">2018 - 2019</div>
+                    <h3 class="education-degree">Secondary School Certificate</h3>
+                    <div class="education-institution">R. F. Naik Vidyalaya</div>
+                    <p class="education-description">
+                        Completed Secondary School Certificate (SSC) at R. F. Naik Vidyalaya, Koparkhairne, Navi Mumbai.
+Developed a strong foundation in mathematics, science, and computer basics. Actively participated in school-level tech and academic activities.
+                    </p>
+                </div>
+                
+                <div class="education-item">
+                    <div class="education-year">2020 - 2021</div>
+                    <h3 class="education-degree">Higher Secondary Certificate</h3>
+                    <div class="education-institution">Karmaveer Bhaurao Patil College</div>
+                    <p class="education-description">
+                        Completed Higher Secondary Certificate (HSC) at Karmaveer Bhaurao Patil College, Vashi.
+Specialized in science stream with focus on computer science and mathematics. Gained essential skills that sparked interest in web development and AI.
+                    </p>
+                </div>
+                
+                <div class="education-item">
+                    <div class="education-year">2021 - 2024</div>
+                    <h3 class="education-degree">Bachlor in Science (Computer Science)</h3>
+                    <div class="education-institution">Karmaveer Bhaurao Patil College</div>
+                    <p class="education-description">
+                        Bachelor of Science (B.Sc.) in Computer Science – Karmaveer Bhaurao Patil College, Vashi
+Graduated with a strong academic record. Gained comprehensive knowledge in programming, data structures, software engineering, and computer networks. Participated in technical seminars and coding competitions, laying a solid foundation for advanced studies in computing.
+                    </p>
+                </div>
+                
+                <div class="education-item">
+                    <div class="education-year">2024 - Present</div>
+                    <h3 class="education-degree">Masters in Science (Computer Science)</h3>
+                    <div class="education-institution">Karmaveer Bhaurao Patil College</div>
+                    <p class="education-description">
+                       Master of Science (M.Sc.) in Computer Science – Karmaveer Bhaurao Patil College, Vashi
+Specialized in advanced computing, machine learning, and cloud technologies. Completed academic projects in AI-driven applications and big data analytics. Strengthened skills in research, development, and team collaboration through practical coursework and workshops.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+  </div>
+    
+    <!-- Experience Section -->
+    <div data-aos="fade-up" data-aos-delay="200">
+    <section class="experience-section">
+        <div class="container">
+            <h2>EXPERIANCE</h2>
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <div class="timeline-date">April 2025 - Present</div>
+                        <h3 class="timeline-title">UI/UX Designer Intern</h3>
+                        <div class="timeline-company">Shiven Infotech Pvt. Ltd</div>
+                        <p class="timeline-description">
+                            Created engaging UI/UX designs that aligned with brand identity and user needs. Transformed complex requirements into clean, user-friendly wireframes and prototypes. Played a key role in improving user satisfaction and accessibility across multiple digital products.
+                        </p>
+                        <div class="timeline-skills">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Wireframing</span>
+                            <span class="skill-tag">Prototyping</span>
+                            <span class="skill-tag">User Research</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <div class="timeline-date">Nov 2024 - April 2025
+                        <h3 class="timeline-title">UI/UX Designer</h3>
+                        <div class="timeline-company">Valuecom Enterprices</div>
+                        <p class="timeline-description">
+                           As a UI/UX Designer, I designed intuitive and responsive interfaces using Figma for both web and mobile applications. I conducted user research and usability testing to enhance user experience and guide design improvements. Collaborating closely with developers, I ensured seamless implementation and consistency across all platforms.
+                        </p>
+                        <div class="timeline-skills">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">Wireframing</span>
+                            <span class="skill-tag">Prototyping</span>
+                            <span class="skill-tag">User Research</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+  </div>
+
+
+
+<div data-aos="fade-up" data-aos-delay="200">
+<section class="services" id="services">
+  <h2 class="outline-title">THE SERVICES</h2>
+  <h3 class="bold-title">I PROVIDE</h3>
+  <p class="description">
+    I create beautiful, user-centered designs and build responsive, engaging websites tailored to each client’s needs.
+  </p>
+  <div class="service-list">
+    <div class="service-item">
+      <span class="number">01</span>
+      <span class="service-name">UI / UX Design</span>
+    </div>
+    <div class="service-item">
+      <span class="number">02</span>
+      <span class="service-name">Web Design</span>
+    </div>
+    <div class="service-item">
+      <span class="number">03</span>
+      <span class="service-name">Landing Page Design</span>
+    </div>
+    <div class="service-item">
+      <span class="number">04</span>
+      <span class="service-name">Mobile App Design</span>
+    </div>
+    <div class="service-item">
+      <span class="number">05</span>
+      <span class="service-name">Web Development</span>
+    </div>
+  </div>
+</section>
+</div>
+
+
+
+
+
+
+
+<div data-aos="fade-up" data-aos-delay="200">
+<section class="projects-section" id="projects">
+    <div class="projects-header">
+      <h1>PROJECTS</h1>
+      <p>
+        Developed responsive web applications with a strong focus on UI/UX and functionality.
+        Worked on e-commerce and management platforms tailored to real-world business needs.
+      </p>
+    </div>
+
+    <div class="icon-bar">
+      <button data-category="uiux">🔲 UI/UX</button>
+      <button data-category="webdesign">📄 Web Design</button>
+      <button data-category="landingpage">💻 Landing Page</button>
+      <button data-category="appdesign">📱 App Design</button>
+      <button data-category="webdev">🖥️ Web Development</button>
+    </div>
+
+    <div id="projectContainer" class="project-list">
+      <!-- Projects will be inserted here via JS -->
+    </div>
+  </section>
+</div>
+
+<div data-aos="fade-up" data-aos-delay="200">
+<section class="contact-section" id="contact">
+  <h2 class="contact-heading">
+    <span class="outline"></span>
+    <span class="solid">CONNECT WITH ME</span>
+  </h2>
+
+  <div class="contact-grid">
+    <div class="contact-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email Icon">
+      <a href="mailto:vinitghodekar08@gmail.com">vinitghodekar08@gmail.com</a>
+    </div>
+
+    <div class="contact-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/724/724664.png" alt="Phone Icon">
+      <a href="tel:+918433984338">8433984338</a>
+    </div>
+
+    <div class="contact-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp Icon">
+      <a href="https://wa.me/918433984338" target="_blank">+91 8433984338</a>
+    </div>
+
+    <div class="contact-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn Icon">
+      <a href="www.linkedin.com/in/vinitghodekar" target="_blank">VINIT GHODEKAR</a>
+    </div>
+  </div>
+</section>
+</div>
+
+
+
+
+<div data-aos="fade-up" data-aos-delay="200">
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <h2 class="footer-logo">VINIT GHODEKAR</h2>
+      <p class="footer-tagline">Crafting clean UI & engaging web experiences.</p>
+    </div>
+    
+    <div class="footer-center">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home">🏠 Home</a></li>
+        <li><a href="#about">👤 About</a></li>
+        <li><a href="#services">🛠 Services</a></li>
+        <li><a href="#projects">📁 Projects</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-rightt">
+      <h4>Connect</h4>
+      <div class="social-iconss">
+        <a href="www.linkedin.com/in/vinitghodekar" target="_blank"><i class="fa fa-linkedin"></i></a>
+        <a href="mailto:vinitghodekar08@gmail.com"><i class="fa fa-envelope"></i></a>
+        <a href="https://wa.me/918433984338" target="_blank"><i class="fa fa-whatsapp"></i></a>
+        <a href="tel:+918433984338"><i class="fa fa-phone"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Vinit Ghodekar — All Rights Reserved.</p>
+  </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script>
+   
+  AOS.init();
+
+     const navbar = document.querySelector('.navbar');
+  const hamburger = document.getElementById('hamburger');
+
+  function toggleMenu() {
+    navbar.classList.toggle('expanded');
+  }
+
+  // Close menu when clicking outside
+  document.addEventListener('click', function (event) {
+    const isClickInside = navbar.contains(event.target);
+    if (!isClickInside) {
+      navbar.classList.remove('expanded');
+    }
+  });
+
+
+
+    const uiuxSkills = `
+      <div class="skill"><div class="skill-name">Wireframing <span class="percentage">80%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div></div>
+      <div class="skill"><div class="skill-name">Prototyping <span class="percentage">65%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 65%;"></div></div></div>
+      <div class="skill"><div class="skill-name">User Research & Personas <span class="percentage">75%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div></div>
+      <div class="skill"><div class="skill-name">Design Systems <span class="percentage">90%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 90%;"></div></div></div>
+      <div class="skill"><div class="skill-name">Visual Design & Typography <span class="percentage">80%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div></div>
+    `;
+
+    const webdevSkills = `
+      <div class="skill"><div class="skill-name">HTML5 & CSS3 <span class="percentage">95%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 95%;"></div></div></div>
+      <div class="skill"><div class="skill-name">JavaScript <span class="percentage">50%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 50%;"></div></div></div>
+      <div class="skill"><div class="skill-name">Responsive Design <span class="percentage">85%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div></div>
+      <div class="skill"><div class="skill-name">Webflow / No-Code Tools <span class="percentage">80%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 80%;"></div></div></div>
+      <div class="skill"><div class="skill-name">Basic PHP / MySQL <span class="percentage">75%</span></div><div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div></div>
+    `;
+
+    function showSkills(type) {
+      const buttons = document.querySelectorAll('.toggle-buttons button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      if (type === 'uiux') {
+        document.getElementById('skills-container').innerHTML = uiuxSkills;
+        buttons[0].classList.add('active');
+      } else {
+        document.getElementById('skills-container').innerHTML = webdevSkills;
+        buttons[1].classList.add('active');
+      }
+    }
+
+    // Load default UI/UX skills on page load
+    window.onload = () => showSkills('uiux');
+
+
+
+
+
+
+
+
+
+    const projects = [
+  {
+    title: "Medicabuyer UI/UX Design",
+    category: "uiux",
+    image: "medicabuyer.jpeg",
+    description:
+      "Medicabuyer is a B2B platform for medical equipment purchases. The UI was designed to be clean, user-friendly, and fully responsive. Focus was on smooth navigation, product visibility, and ease of interaction. Figma was used to create wireframes, prototypes, and final UI screens.",
+    link: "Medicabuyer Casestudy.pdf",
+  },
+  {
+    title: "Pulcher UI/UX Design",
+    category: "uiux",
+    image: "pulcher laptop.jpeg",
+    description:
+      "Pulcher Cosmetics is a beauty brand e-commerce platform designed for a modern audience. The UI/UX design reflects a minimal, stylish aesthetic to match the brand identity. User flows were created to make product discovery and checkout simple and engaging. The entire design was crafted in Figma with a mobile-first approach.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Portfolio UI/UX Design",
+    category: "uiux",
+    image: "portfolio.jpeg",
+    description:
+      "This project is a personal portfolio website designed to showcase my skills, projects, and resume in a clean and interactive layout. It includes sections like About, Projects, Skills, Contact, and a downloadable resume. The responsive design ensures a seamless experience across devices and highlights my UI/UX and web development abilities.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "NFC Card Service UI/UX Design",
+    category: "uiux",
+    image: "nfc.png",
+    description:
+      "This project focuses on the UI/UX design of a digital NFC business card service, created using Figma. The design includes user flows for card creation, customization, digital sharing, and profile management. It emphasizes a clean, professional look with intuitive navigation and mobile-first responsiveness. Tools used: Figma for wireframing, prototyping, and high-fidelity UI design.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Medicabuyer Web Design",
+    category: "webdesign",
+    image: "medicabuyer.jpeg",
+    description:
+      "Medicabuyer is a B2B platform for medical equipment purchases. The UI was designed to be clean, user-friendly, and fully responsive. Focus was on smooth navigation, product visibility, and ease of interaction. Figma was used to create wireframes, prototypes, and final UI screens.",
+    link: "Medicabuyer Casestudy.pdf"
+  },
+  {
+    title: "Pulcher Web Design",
+    category: "webdesign",
+    image: "pulcher laptop.jpeg",
+    description:
+      "Pulcher Cosmetics is a beauty brand e-commerce platform designed for a modern audience. The UI/UX design reflects a minimal, stylish aesthetic to match the brand identity. User flows were created to make product discovery and checkout simple and engaging. The entire design was crafted in Figma with a mobile-first approach.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Portfolio Web Design",
+    category: "webdesign",
+    image: "portfolio.jpeg",
+    description:
+      "This project is a personal portfolio website designed to showcase my skills, projects, and resume in a clean and interactive layout. It includes sections like About, Projects, Skills, Contact, and a downloadable resume. The responsive design ensures a seamless experience across devices and highlights my UI/UX and web development abilities.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "NFC Card Service Web Design",
+    category: "webdesign",
+    image: "nfc.png",
+    description:
+      "This project focuses on the UI/UX design of a digital NFC business card service, created using Figma. The design includes user flows for card creation, customization, digital sharing, and profile management. It emphasizes a clean, professional look with intuitive navigation and mobile-first responsiveness. Tools used: Figma for wireframing, prototyping, and high-fidelity UI design.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Zeta Landing Page",
+    category: "landingpage",
+    image: "project.jpg",
+    description:
+      "Zeta is a SaaS product landing page focused on conversions and clear messaging, designed with modern UI principles.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "MobileFit App Design",
+    category: "appdesign",
+    image: "project.jpg",
+    description:
+      "MobileFit is a fitness tracking app with a sleek interface, intuitive user flows, and personalized dashboard views.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Ganpati Idole Selling Website",
+    category: "webdev",
+    image: "shop.jpeg",
+    description:
+      "This project is an e-commerce website for selling eco-friendly Ganpati idols online. It features a clean, responsive UI, product filters, and secure checkout for a smooth shopping experience. Customers can explore idols by size, style, and material, with detailed images and descriptions. Technologies used: HTML, CSS, JavaScript, and basic PHP with MySQL for backend and database management.",
+    link: "https://shreesadgurukrupaarts.com/home.php"
+  },
+  {
+    title: "Online Invoice Management System",
+    category: "webdev",
+    image: "invoice.jpeg",
+    description:
+      "This project is a web-based invoice management system designed to generate, track, and manage invoices efficiently. It allows users to create professional invoices, manage client data, track payment statuses, and generate reports. The system improves billing accuracy and saves time for businesses. Technologies used: HTML, CSS, JavaScript, PHP, and MySQL for backend operations and data storage.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Portfolio Website",
+    category: "webdev",
+    image: "portfolio.jpeg",
+    description:
+      "This project is a personal portfolio website designed to showcase my skills, projects, and resume in a clean and interactive layout. It includes sections like About, Projects, Skills, Contact. The responsive design ensures a seamless experience across devices and highlights my UI/UX and web development abilities. Technologies used: HTML, CSS, JavaScript, Bootstrap, and basic animations using CSS or JavaScript.",
+    link: "medicabuyer.html"
+  },
+  {
+    title: "Pulcher Website Frontend",
+    category: "webdev",
+    image: "pulcher laptop.jpeg",
+    description:
+      "Pulcher Cosmetics is a beauty brand e-commerce platform built for a modern audience. The website was developed with a clean, responsive layout to align with the brand’s stylish identity. Seamless user flows were implemented to ensure easy product discovery and a smooth checkout experience. The entire platform was developed using HTML, CSS, JavaScript, and responsive frameworks with a mobile-first approach. Performance optimization and cross-browser compatibility were also prioritized.",
+    link: "medicabuyer.html"
+  },
+];
+
+
+const container = document.getElementById("projectContainer");
+const buttons = document.querySelectorAll(".icon-bar button");
+
+function renderProjects(category) {
+  container.innerHTML = "";
+  const filtered = projects.filter((proj) => proj.category === category);
+  filtered.forEach((proj) => {
+    container.innerHTML += `
+      <div class="project-card">
+        <img src="${proj.image}" alt="${proj.title}" />
+        <div class="project-info">
+          <h3>${proj.title}</h3>
+          <p>${proj.description}</p>
+          <a href="${proj.link}" class="project-btn">CHECK IT NOW</a>
+        </div>
+      </div>
+    `;
+  });
+}
+
+buttons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    buttons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderProjects(btn.dataset.category);
+  });
+});
+
+// Default display
+renderProjects("uiux");
+buttons[0].classList.add("active");
+
+  </script>
+
+</body>
+</html>
