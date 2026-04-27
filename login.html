@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MeetLocal — SmileyTrips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --navy:    #080e1c;
+  --deep:    #0d1628;
+  --amber:   #f5a623;
+  --gold:    #e8952e;
+  --coral:   #e8604c;
+  --teal:    #0d9488;
+  --cream:   #fef8ee;
+  --muted:   #a8b4c8;
+  --glass-bg:    rgba(255,255,255,0.06);
+  --glass-border:rgba(255,255,255,0.12);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+  --transition: .35s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: #fff;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--deep); }
+::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 3px; }
+
+/* ===== PAGES ===== */
+.page { display: none; min-height: 100vh; animation: fadeIn .5s ease; }
+.page.active { display: flex; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ===========================
+   SHARED SPLIT LAYOUT
+   =========================== */
+.split { display: flex; min-height: 100vh; width: 100%; }
+
+/* LEFT PANEL */
+.left-panel {
+  flex: 0 0 52%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 60px;
+  background: var(--navy);
+}
+.left-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(245,166,35,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(13,148,136,.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 50% 80%, rgba(232,96,76,.12) 0%, transparent 50%);
+  z-index: 0;
+}
+
+/* Animated background orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: .35;
+  animation: floatOrb 8s ease-in-out infinite;
+}
+.orb-1 { width:360px;height:360px;background:var(--amber);top:-80px;left:-80px;animation-delay:0s; }
+.orb-2 { width:280px;height:280px;background:var(--teal);bottom:10%;right:-60px;animation-delay:-3s; }
+.orb-3 { width:200px;height:200px;background:var(--coral);top:40%;left:30%;animation-delay:-5s; }
+@keyframes floatOrb {
+  0%,100%{ transform:translate(0,0) scale(1); }
+  33%{ transform:translate(20px,-30px) scale(1.05); }
+  66%{ transform:translate(-15px,20px) scale(.95); }
+}
+
+/* Stars / particles */
+.stars { position:absolute;inset:0;z-index:0;overflow:hidden; }
+.star {
+  position:absolute;
+  width:2px;height:2px;
+  background:#fff;
+  border-radius:50%;
+  opacity:0;
+  animation:twinkle var(--dur,3s) ease-in-out infinite var(--delay,0s);
+}
+@keyframes twinkle {
+  0%,100%{opacity:0;transform:scale(.5);}
+  50%{opacity:.8;transform:scale(1.2);}
+}
+
+/* Map grid overlay */
+.grid-overlay {
+  position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(245,166,35,.04) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(245,166,35,.04) 1px, transparent 1px);
+  background-size:48px 48px;
+}
+
+/* Destination cards floating */
+.float-cards {
+  position:absolute;
+  top: 50%;transform:translateY(-50%);
+  right:-20px;
+  z-index:2;
+  display:flex;flex-direction:column;gap:14px;
+}
+.dest-card {
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(20px);
+  border-radius:16px;
+  padding:14px 18px;
+  display:flex;align-items:center;gap:12px;
+  width:210px;
+  animation:slideCardIn .6s ease both;
+  transition:transform var(--transition);
+  cursor:default;
+}
+.dest-card:hover{ transform:translateX(-8px) scale(1.02); }
+.dest-card:nth-child(1){animation-delay:.1s;}
+.dest-card:nth-child(2){animation-delay:.25s;margin-left:24px;}
+.dest-card:nth-child(3){animation-delay:.4s;}
+@keyframes slideCardIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
+.dest-icon{ font-size:26px;line-height:1; }
+.dest-info .dest-name{ font-size:13px;font-weight:600;color:#fff;line-height:1.2; }
+.dest-info .dest-sub{ font-size:11px;color:var(--muted);margin-top:2px; }
+.dest-badge{ margin-left:auto;font-size:10px;font-family:var(--font-mono);color:var(--amber); }
+
+.left-content { position:relative;z-index:3; }
+.panel-logo { display:flex;align-items:center;gap:10px;margin-bottom:48px; }
+.panel-logo-icon { width:38px;height:38px;background:var(--amber);border-radius:10px;display:grid;place-items:center;font-size:20px; }
+.panel-logo-name { font-family:var(--font-mono);font-size:14px;letter-spacing:.08em;color:#fff; }
+
+.panel-headline {
+  font-family:var(--font-display);
+  font-size:clamp(38px,4vw,56px);
+  font-weight:700;
+  line-height:1.1;
+  color:#fff;
+  margin-bottom:20px;
+}
+.panel-headline em { font-style:italic;color:var(--amber); }
+
+.panel-sub { font-size:15px;color:var(--muted);line-height:1.7;max-width:380px;margin-bottom:36px; }
+
+.stat-row { display:flex;gap:32px; }
+.stat-item { }
+.stat-num { font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--amber); }
+.stat-lbl { font-size:12px;color:var(--muted);margin-top:2px; }
+
+/* RIGHT PANEL */
+.right-panel {
+  flex: 0 0 48%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:60px 48px;
+  background:var(--deep);
+  position:relative;
+  overflow:hidden;
+}
+.right-panel::before {
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 60% at 80% 20%, rgba(245,166,35,.07) 0%, transparent 60%);
+}
+
+.form-card {
+  width:100%;max-width:400px;
+  position:relative;z-index:1;
+}
+
+.form-title-row { margin-bottom:36px; }
+.form-title { font-family:var(--font-display);font-size:36px;font-weight:700;line-height:1.15; }
+.form-subtitle { font-size:14px;color:var(--muted);margin-top:8px;line-height:1.6; }
+
+/* Tab switcher */
+.tab-row { display:flex;gap:4px;background:rgba(255,255,255,.05);border-radius:12px;padding:4px;margin-bottom:32px; }
+.tab-btn {
+  flex:1;padding:10px;border:none;border-radius:9px;cursor:pointer;
+  font-family:var(--font-body);font-size:13px;font-weight:500;
+  background:transparent;color:var(--muted);
+  transition:all var(--transition);
+}
+.tab-btn.active { background:var(--amber);color:var(--navy);font-weight:600; }
+.tab-btn:hover:not(.active){ color:#fff; }
+
+/* Form fields */
+.field { margin-bottom:20px; }
+.field-label { display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px; }
+.field-wrap { position:relative; }
+.field-icon {
+  position:absolute;left:16px;top:50%;transform:translateY(-50%);
+  font-size:16px;color:var(--muted);pointer-events:none;
+  transition:color var(--transition);
+}
+.field-input {
+  width:100%;padding:14px 16px 14px 46px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  color:#fff;
+  font-family:var(--font-body);font-size:14px;
+  outline:none;
+  transition:all var(--transition);
+}
+.field-input::placeholder{ color:rgba(255,255,255,.3); }
+.field-input:focus {
+  background:rgba(245,166,35,.06);
+  border-color:var(--amber);
+  box-shadow:0 0 0 3px rgba(245,166,35,.1);
+}
+.field-input:focus + .field-icon,
+.field-wrap:focus-within .field-icon { color:var(--amber); }
+.field-error { font-size:11px;color:var(--coral);margin-top:6px;display:none; }
+.field.error .field-input { border-color:var(--coral); }
+.field.error .field-error { display:block; }
+
+/* Password toggle */
+.pw-toggle {
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;
+  transition:color var(--transition);padding:4px;
+}
+.pw-toggle:hover{ color:#fff; }
+.pw-input{ padding-right:46px !important; }
+
+/* Row fields */
+.field-row { display:grid;grid-template-columns:1fr 1fr;gap:16px; }
+
+/* Checkbox */
+.check-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:24px; }
+.check-label { display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--muted); }
+.check-box {
+  width:18px;height:18px;border-radius:5px;
+  border:1px solid rgba(255,255,255,.2);
+  background:transparent;appearance:none;cursor:pointer;
+  transition:all var(--transition);flex-shrink:0;
+  position:relative;
+}
+.check-box:checked { background:var(--amber);border-color:var(--amber); }
+.check-box:checked::after { content:'✓';position:absolute;inset:0;display:grid;place-items:center;font-size:11px;color:var(--navy);font-weight:700; }
+.forgot-link { font-size:13px;color:var(--amber);text-decoration:none;transition:opacity var(--transition); }
+.forgot-link:hover{ opacity:.7; }
+
+/* CTA Button */
+.btn-primary {
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--amber),var(--gold));
+  border:none;border-radius:12px;
+  font-family:var(--font-body);font-size:15px;font-weight:600;
+  color:var(--navy);cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:all var(--transition);
+  letter-spacing:.02em;
+}
+.btn-primary::before {
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.25),transparent);
+  opacity:0;transition:opacity var(--transition);
+}
+.btn-primary:hover{ transform:translateY(-2px);box-shadow:0 12px 40px rgba(245,166,35,.35); }
+.btn-primary:hover::before{ opacity:1; }
+.btn-primary:active{ transform:translateY(0); }
+.btn-loading { pointer-events:none;opacity:.8; }
+
+/* Divider */
+.or-divider { display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--muted);font-size:12px; }
+.or-divider::before,.or-divider::after { content:'';flex:1;height:1px;background:rgba(255,255,255,.1); }
+
+/* Social buttons */
+.social-row { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px; }
+.btn-social {
+  padding:12px;border-radius:12px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:#fff;font-family:var(--font-body);font-size:13px;font-weight:500;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all var(--transition);
+}
+.btn-social:hover{ background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2); }
+
+/* Switch page link */
+.switch-link { text-align:center;font-size:13px;color:var(--muted);margin-top:20px; }
+.switch-link a { color:var(--amber);text-decoration:none;font-weight:600; }
+.switch-link a:hover{ text-decoration:underline; }
+
+/* Step indicator */
+.step-bar { display:flex;gap:6px;margin-bottom:28px; }
+.step-dot { height:4px;border-radius:2px;background:rgba(255,255,255,.1);transition:all var(--transition); }
+.step-dot.done { background:var(--teal); }
+.step-dot.active { background:var(--amber);flex:2; }
+.step-dot.pending { flex:1; }
+
+/* Select field */
+.field-select {
+  width:100%;padding:14px 16px 14px 46px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;color:#fff;
+  font-family:var(--font-body);font-size:14px;
+  outline:none;cursor:pointer;
+  transition:all var(--transition);
+  appearance:none;
+}
+.field-select:focus { background:rgba(245,166,35,.06);border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,166,35,.1); }
+.field-select option{ background:var(--deep);color:#fff; }
+
+/* ===========================
+   DASHBOARD
+   =========================== */
+#page-dashboard { flex-direction:column; }
+
+.dash-layout { display:flex;min-height:100vh;width:100%; }
+
+/* Sidebar */
+.sidebar {
+  width:260px;flex-shrink:0;
+  background:var(--deep);
+  border-right:1px solid rgba(255,255,255,.06);
+  display:flex;flex-direction:column;
+  padding:0 0 24px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.sidebar-top { padding:28px 24px;border-bottom:1px solid rgba(255,255,255,.06); }
+.sidebar-logo { display:flex;align-items:center;gap:10px;margin-bottom:24px; }
+.sidebar-logo-icon { width:34px;height:34px;background:var(--amber);border-radius:9px;display:grid;place-items:center;font-size:18px; }
+.sidebar-logo-name { font-family:var(--font-mono);font-size:12px;color:#fff;letter-spacing:.08em; }
+.sidebar-profile { display:flex;align-items:center;gap:12px; }
+.avatar {
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--amber),var(--coral));
+  display:grid;place-items:center;font-size:18px;font-weight:700;color:var(--navy);
+  flex-shrink:0;border:2px solid rgba(245,166,35,.4);
+}
+.avatar-name { font-size:14px;font-weight:600;line-height:1.2; }
+.avatar-role { font-size:11px;color:var(--amber); }
+
+.sidebar-nav { flex:1;padding:20px 16px; }
+.nav-section-label { font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:0 8px;margin:16px 0 8px; }
+.nav-item {
+  display:flex;align-items:center;gap:12px;
+  padding:11px 12px;border-radius:10px;
+  color:var(--muted);font-size:14px;font-weight:500;
+  cursor:pointer;margin-bottom:2px;
+  transition:all var(--transition);text-decoration:none;position:relative;
+}
+.nav-item:hover{ background:rgba(255,255,255,.05);color:#fff; }
+.nav-item.active { background:rgba(245,166,35,.12);color:var(--amber); }
+.nav-item.active::before { content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--amber);border-radius:0 3px 3px 0; }
+.nav-icon { font-size:17px;width:22px;text-align:center; }
+.nav-badge { margin-left:auto;background:var(--coral);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;font-family:var(--font-mono); }
+
+.sidebar-bottom { padding:16px 24px;border-top:1px solid rgba(255,255,255,.06); }
+.btn-logout {
+  width:100%;padding:11px;border-radius:10px;
+  background:rgba(232,96,76,.1);border:1px solid rgba(232,96,76,.2);
+  color:var(--coral);font-family:var(--font-body);font-size:13px;font-weight:500;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all var(--transition);
+}
+.btn-logout:hover{ background:rgba(232,96,76,.2); }
+
+/* Main content */
+.dash-main { flex:1;overflow-y:auto;background:var(--navy);padding:36px 40px; }
+
+.dash-header { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px; }
+.dash-greeting { }
+.greeting-time { font-size:12px;font-family:var(--font-mono);color:var(--amber);letter-spacing:.08em;margin-bottom:6px; }
+.greeting-text { font-family:var(--font-display);font-size:32px;font-weight:700;line-height:1.2; }
+.greeting-sub { font-size:14px;color:var(--muted);margin-top:6px; }
+.dash-actions { display:flex;gap:10px; }
+.btn-sm {
+  padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:var(--font-body);transition:all var(--transition);border:none;
+}
+.btn-sm-outline { background:transparent;border:1px solid rgba(255,255,255,.12);color:#fff; }
+.btn-sm-outline:hover{ background:rgba(255,255,255,.06); }
+.btn-sm-fill { background:linear-gradient(135deg,var(--amber),var(--gold));color:var(--navy); }
+.btn-sm-fill:hover{ transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,.3); }
+
+/* Stats grid */
+.stats-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:32px; }
+.stat-card {
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);border-radius:18px;padding:22px;
+  position:relative;overflow:hidden;cursor:default;
+  transition:transform var(--transition),box-shadow var(--transition);
+}
+.stat-card:hover{ transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.3); }
+.stat-card::before { content:'';position:absolute;inset:0;opacity:.06;border-radius:inherit; }
+.stat-card.c1::before{ background:var(--amber); }
+.stat-card.c2::before{ background:var(--teal); }
+.stat-card.c3::before{ background:var(--coral); }
+.stat-card.c4::before{ background:#a855f7; }
+.stat-card-icon { font-size:24px;margin-bottom:14px; }
+.stat-card-val { font-family:var(--font-display);font-size:30px;font-weight:700;line-height:1; }
+.stat-card-lbl { font-size:12px;color:var(--muted);margin-top:6px; }
+.stat-card-change { font-size:11px;font-family:var(--font-mono);margin-top:10px;display:flex;align-items:center;gap:4px; }
+.change-up{ color:#22c55e; }
+.change-down{ color:var(--coral); }
+
+/* Two column layout */
+.dash-cols { display:grid;grid-template-columns:1fr 380px;gap:24px;margin-bottom:24px; }
+
+/* Upcoming trips */
+.dash-card {
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  border-radius:20px;padding:24px;
+}
+.dash-card-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px; }
+.dash-card-title { font-family:var(--font-display);font-size:20px;font-weight:700; }
+.see-all { font-size:12px;color:var(--amber);cursor:pointer;font-weight:600; }
+
+.trip-item {
+  display:flex;align-items:center;gap:16px;
+  padding:14px;border-radius:14px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  margin-bottom:10px;
+  transition:all var(--transition);cursor:pointer;
+}
+.trip-item:hover{ background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);transform:translateX(4px); }
+.trip-icon { width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0; }
+.trip-icon.c1{ background:rgba(245,166,35,.15); }
+.trip-icon.c2{ background:rgba(13,148,136,.15); }
+.trip-icon.c3{ background:rgba(232,96,76,.15); }
+.trip-icon.c4{ background:rgba(168,85,247,.15); }
+.trip-info{ flex:1;min-width:0; }
+.trip-title{ font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.trip-meta{ font-size:12px;color:var(--muted);margin-top:3px; }
+.trip-price{ font-family:var(--font-mono);font-size:13px;color:var(--amber);font-weight:700;white-space:nowrap; }
+.trip-status {
+  font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;
+  font-family:var(--font-mono);white-space:nowrap;
+}
+.status-confirmed{ background:rgba(34,197,94,.12);color:#22c55e; }
+.status-pending{ background:rgba(245,166,35,.12);color:var(--amber); }
+.status-upcoming{ background:rgba(13,148,136,.12);color:var(--teal); }
+
+/* Earnings chart */
+.chart-area { padding-top:8px; }
+.chart-bars { display:flex;align-items:flex-end;gap:8px;height:120px;margin-bottom:8px; }
+.chart-bar-wrap { flex:1;display:flex;flex-direction:column;align-items:center;gap:4px; }
+.chart-bar-bg { width:100%;border-radius:6px 6px 0 0;background:rgba(255,255,255,.06);position:relative;overflow:hidden;cursor:pointer;transition:background var(--transition); }
+.chart-bar-bg:hover{ background:rgba(255,255,255,.1); }
+.chart-bar-fill { position:absolute;bottom:0;left:0;right:0;border-radius:6px 6px 0 0;transition:height .8s cubic-bezier(.4,0,.2,1); }
+.chart-bar-lbl { font-size:10px;color:var(--muted);font-family:var(--font-mono); }
+
+/* Notifications */
+.notif-item {
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.notif-item:last-child{ border-bottom:none;padding-bottom:0; }
+.notif-dot { width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:5px;flex-shrink:0; }
+.notif-dot.read{ background:rgba(255,255,255,.2); }
+.notif-text{ font-size:13px;color:rgba(255,255,255,.8);line-height:1.5; }
+.notif-time{ font-size:11px;color:var(--muted);margin-top:3px;font-family:var(--font-mono); }
+
+/* Profile completion */
+.progress-row { display:flex;align-items:center;gap:12px;margin-bottom:16px; }
+.progress-bar-bg { flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden; }
+.progress-bar-fill { height:100%;border-radius:3px;background:linear-gradient(90deg,var(--amber),var(--gold)); }
+.progress-pct { font-size:12px;font-family:var(--font-mono);color:var(--amber);white-space:nowrap; }
+
+/* Badges */
+.badge-row { display:flex;flex-wrap:wrap;gap:8px;margin-top:12px; }
+.badge {
+  padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;
+  display:flex;align-items:center;gap:5px;
+}
+.badge-earned{ background:rgba(245,166,35,.12);color:var(--amber);border:1px solid rgba(245,166,35,.2); }
+.badge-locked{ background:rgba(255,255,255,.04);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.08); }
+
+/* Top destinations */
+.dest-list-item {
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.dest-list-item:last-child{ border-bottom:none; }
+.dest-rank{ font-family:var(--font-mono);font-size:11px;color:var(--muted);width:18px; }
+.dest-list-name{ flex:1;font-size:13px;font-weight:500; }
+.dest-bar-wrap{ width:90px; }
+.dest-bar { height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden; }
+.dest-bar-fill { height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));border-radius:2px; }
+.dest-bookings{ font-size:11px;font-family:var(--font-mono);color:var(--muted);width:28px;text-align:right; }
+
+/* Mobile nav */
+.mobile-nav-bar {
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--deep);border-top:1px solid rgba(255,255,255,.08);
+  padding:10px 0;z-index:100;
+  justify-content:space-around;
+}
+.mob-nav-item { display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px 12px; }
+.mob-nav-icon { font-size:20px; }
+.mob-nav-lbl { font-size:9px;color:var(--muted); }
+.mob-nav-item.active .mob-nav-icon { filter:drop-shadow(0 0 4px var(--amber)); }
+.mob-nav-item.active .mob-nav-lbl { color:var(--amber); }
+
+/* ===== TOAST ===== */
+.toast {
+  position:fixed;bottom:30px;right:30px;
+  background:var(--deep);border:1px solid rgba(255,255,255,.12);
+  border-left:3px solid var(--amber);
+  border-radius:12px;padding:14px 18px;
+  font-size:13px;color:#fff;
+  box-shadow:0 12px 40px rgba(0,0,0,.4);
+  z-index:9999;
+  transform:translateX(120%);transition:transform .4s cubic-bezier(.4,0,.2,1);
+  max-width:300px;line-height:1.5;
+}
+.toast.show{ transform:none; }
+.toast.error{ border-left-color:var(--coral); }
+.toast.success{ border-left-color:var(--teal); }
+
+/* ===== LOADING OVERLAY ===== */
+.loader-overlay {
+  position:fixed;inset:0;background:var(--navy);
+  display:grid;place-items:center;z-index:10000;
+  transition:opacity .5s ease;
+}
+.loader-spin {
+  width:48px;height:48px;border-radius:50%;
+  border:3px solid rgba(245,166,35,.2);
+  border-top-color:var(--amber);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{ to{transform:rotate(360deg);} }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+  .left-panel{ display:none; }
+  .right-panel{ flex:1;padding:40px 24px; }
+  .split{ min-height:100dvh; }
+
+  .stats-grid{ grid-template-columns:repeat(2,1fr); }
+  .dash-cols{ grid-template-columns:1fr; }
+  .sidebar{ display:none; }
+  .dash-main{ padding:24px 20px 80px; }
+  .mobile-nav-bar{ display:flex; }
+  .dash-header{ flex-direction:column;gap:16px; }
+  .dash-actions{ align-self:stretch; }
+  .btn-sm{ flex:1;justify-content:center; }
+  .field-row{ grid-template-columns:1fr; }
+}
+
+@media(max-width:500px){
+  .stats-grid{ grid-template-columns:1fr 1fr; }
+  .stat-card-val{ font-size:24px; }
+  .social-row{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader-overlay" id="loader">
+  <div class="loader-spin"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ========================
+     PAGE: LOGIN
+     ======================== -->
+<div class="page active" id="page-login">
+  <div class="split">
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="stars" id="stars-login"></div>
+      <div class="grid-overlay"></div>
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+
+      <!-- Floating destination cards -->
+      <div class="float-cards">
+        <div class="dest-card">
+          <div class="dest-icon">🏯</div>
+          <div class="dest-info">
+            <div class="dest-name">Kyoto, Japan</div>
+            <div class="dest-sub">4.9 ★ · 128 tours</div>
+          </div>
+          <div class="dest-badge">NEW</div>
+        </div>
+        <div class="dest-card">
+          <div class="dest-icon">🏝️</div>
+          <div class="dest-info">
+            <div class="dest-name">Bali, Indonesia</div>
+            <div class="dest-sub">4.8 ★ · 256 tours</div>
+          </div>
+        </div>
+        <div class="dest-card">
+          <div class="dest-icon">🕌</div>
+          <div class="dest-info">
+            <div class="dest-name">Jaipur, India</div>
+            <div class="dest-sub">4.7 ★ · 94 tours</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="left-content">
+        <div class="panel-logo">
+          <div class="panel-logo-icon">✈️</div>
+          <div class="panel-logo-name">MEETLOCAL</div>
+        </div>
+        <h1 class="panel-headline">
+          Share your city.<br/>
+          <em>Earn on your</em><br/>own terms.
+        </h1>
+        <p class="panel-sub">
+          Join thousands of local hosts turning their passion for travel into a thriving income. Set your own schedule, pricing, and experiences.
+        </p>
+        <div class="stat-row">
+          <div class="stat-item">
+            <div class="stat-num">12K+</div>
+            <div class="stat-lbl">Local Hosts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">80+</div>
+            <div class="stat-lbl">Cities</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">₹4.2L</div>
+            <div class="stat-lbl">Avg. Annual Earn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel">
+      <div class="form-card">
+        <div class="form-title-row">
+          <div class="form-title">Welcome back,<br/>host 👋</div>
+          <div class="form-subtitle">Log in to access your dashboard and manage your tours.</div>
+        </div>
+
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="switchTab(this,'host')">Local Host</button>
+          <button class="tab-btn" onclick="switchTab(this,'traveler')">Traveler</button>
+        </div>
+
+        <form id="login-form" onsubmit="handleLogin(event)" novalidate>
+          <div class="field" id="f-email">
+            <label class="field-label">Email Address</label>
+            <div class="field-wrap">
+              <span class="field-icon">📧</span>
+              <input type="email" class="field-input" id="login-email" placeholder="you@example.com" />
+            </div>
+            <div class="field-error" id="e-email">Please enter a valid email.</div>
+          </div>
+
+          <div class="field" id="f-password">
+            <label class="field-label">Password</label>
+            <div class="field-wrap">
+              <span class="field-icon">🔒</span>
+              <input type="password" class="field-input pw-input" id="login-pw" placeholder="Enter your password" />
+              <button type="button" class="pw-toggle" onclick="togglePw('login-pw',this)">👁</button>
+            </div>
+            <div class="field-error" id="e-pw">Password is required.</div>
+          </div>
+
+          <div class="check-row">
+            <label class="check-label">
+              <input type="checkbox" class="check-box" checked />
+              Remember me for 30 days
+            </label>
+            <a href="#" class="forgot-link" onclick="showPage('page-forgot')">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-primary" id="login-btn">
+            Log In to Dashboard →
+          </button>
+        </form>
+
+        <div class="or-divider">or continue with</div>
+        <div class="social-row">
+          <button class="btn-social" onclick="socialLogin('Google')">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="btn-social" onclick="socialLogin('Facebook')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+        </div>
+
+        <div class="switch-link">
+          Don't have an account? <a href="#" onclick="showPage('page-signup')">Register as host →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================
+     PAGE: SIGNUP
+     ======================== -->
+<div class="page" id="page-signup">
+  <div class="split" style="flex-direction:row-reverse;">
+    <!-- LEFT (reversed) -->
+    <div class="left-panel" style="justify-content:center;">
+      <div class="stars" id="stars-signup"></div>
+      <div class="grid-overlay"></div>
+      <div class="orb orb-1" style="background:var(--teal);top:auto;bottom:-80px;left:-60px;"></div>
+      <div class="orb orb-2" style="background:var(--coral);bottom:auto;top:10%;right:0;"></div>
+      <div class="orb orb-3" style="background:var(--amber);top:50%;left:50%;"></div>
+
+      <div class="left-content" style="z-index:3;position:relative;">
+        <div class="panel-logo">
+          <div class="panel-logo-icon">🌍</div>
+          <div class="panel-logo-name">MEETLOCAL</div>
+        </div>
+        <h1 class="panel-headline">
+          Turn your city<br/>
+          into a <em>canvas</em><br/>of stories.
+        </h1>
+        <p class="panel-sub">
+          Travelers don't just want destinations — they want <em>real</em> connections. Share your insider knowledge, curate unforgettable experiences, and get paid for it.
+        </p>
+
+        <!-- Feature highlights -->
+        <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(245,166,35,.15);display:grid;place-items:center;flex-shrink:0;">✅</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.8);">Free to join — zero upfront cost</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(13,148,136,.15);display:grid;place-items:center;flex-shrink:0;">📅</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.8);">Choose your own schedule & pricing</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(232,96,76,.15);display:grid;place-items:center;flex-shrink:0;">💸</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.8);">Instant payouts every week</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(168,85,247,.15);display:grid;place-items:center;flex-shrink:0;">🛡️</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.8);">Host protection & 24/7 support</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-panel" style="padding:40px 48px;">
+      <div class="form-card" style="max-width:440px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <div>
+            <div class="form-title" style="font-size:30px;">Create your host<br/>account ✨</div>
+            <div class="form-subtitle">Step <span id="step-num">1</span> of 2 — takes only 2 minutes</div>
+          </div>
+        </div>
+
+        <div class="step-bar" id="step-bar">
+          <div class="step-dot active" style="flex:2;"></div>
+          <div class="step-dot pending" style="flex:1;"></div>
+        </div>
+
+        <!-- Step 1 -->
+        <div id="signup-step-1">
+          <form id="signup-form-1" onsubmit="nextStep(event)" novalidate>
+            <div class="field-row">
+              <div class="field" id="sf-fname">
+                <label class="field-label">First Name</label>
+                <div class="field-wrap">
+                  <span class="field-icon">👤</span>
+                  <input type="text" class="field-input" id="s-fname" placeholder="Arjun" />
+                </div>
+                <div class="field-error">Required.</div>
+              </div>
+              <div class="field" id="sf-lname">
+                <label class="field-label">Last Name</label>
+                <div class="field-wrap">
+                  <span class="field-icon">👤</span>
+                  <input type="text" class="field-input" id="s-lname" placeholder="Sharma" />
+                </div>
+                <div class="field-error">Required.</div>
+              </div>
+            </div>
+
+            <div class="field" id="sf-semail">
+              <label class="field-label">Email Address</label>
+              <div class="field-wrap">
+                <span class="field-icon">📧</span>
+                <input type="email" class="field-input" id="s-email" placeholder="you@example.com" />
+              </div>
+              <div class="field-error">Enter a valid email.</div>
+            </div>
+
+            <div class="field" id="sf-phone">
+              <label class="field-label">Phone Number</label>
+              <div class="field-wrap">
+                <span class="field-icon">📱</span>
+                <input type="tel" class="field-input" id="s-phone" placeholder="+91 98765 43210" />
+              </div>
+              <div class="field-error">Enter a valid phone number.</div>
+            </div>
+
+            <div class="field" id="sf-city">
+              <label class="field-label">Your City</label>
+              <div class="field-wrap">
+                <span class="field-icon">📍</span>
+                <select class="field-select" id="s-city">
+                  <option value="">Select your city…</option>
+                  <option>Chennai</option><option>Mumbai</option><option>Delhi</option>
+                  <option>Bangalore</option><option>Kolkata</option><option>Jaipur</option>
+                  <option>Goa</option><option>Hyderabad</option><option>Pune</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="field-error">Please select a city.</div>
+            </div>
+
+            <button type="submit" class="btn-primary">Continue →</button>
+          </form>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="signup-step-2" style="display:none;">
+          <form id="signup-form-2" onsubmit="handleSignup(event)" novalidate>
+            <div class="field" id="sf-spw">
+              <label class="field-label">Create Password</label>
+              <div class="field-wrap">
+                <span class="field-icon">🔒</span>
+                <input type="password" class="field-input pw-input" id="s-pw" placeholder="Minimum 8 characters" />
+                <button type="button" class="pw-toggle" onclick="togglePw('s-pw',this)">👁</button>
+              </div>
+              <div class="field-error">Password must be at least 8 characters.</div>
+            </div>
+
+            <div class="field" id="sf-spw2">
+              <label class="field-label">Confirm Password</label>
+              <div class="field-wrap">
+                <span class="field-icon">🔒</span>
+                <input type="password" class="field-input pw-input" id="s-pw2" placeholder="Re-enter password" />
+                <button type="button" class="pw-toggle" onclick="togglePw('s-pw2',this)">👁</button>
+              </div>
+              <div class="field-error">Passwords don't match.</div>
+            </div>
+
+            <!-- Strength bar -->
+            <div style="margin-bottom:20px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:11px;color:var(--muted);">Password strength</span>
+                <span style="font-size:11px;font-family:var(--font-mono);color:var(--amber);" id="strength-lbl">—</span>
+              </div>
+              <div style="display:flex;gap:4px;">
+                <div style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);" class="str-seg" id="str-1"></div>
+                <div style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);" class="str-seg" id="str-2"></div>
+                <div style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);" class="str-seg" id="str-3"></div>
+                <div style="flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);" class="str-seg" id="str-4"></div>
+              </div>
+            </div>
+
+            <div class="field" id="sf-expertise">
+              <label class="field-label">Area of Expertise</label>
+              <div class="field-wrap">
+                <span class="field-icon">🎒</span>
+                <select class="field-select" id="s-expertise">
+                  <option value="">Select expertise…</option>
+                  <option>Heritage & History</option>
+                  <option>Food & Culinary</option>
+                  <option>Adventure & Outdoor</option>
+                  <option>Art & Culture</option>
+                  <option>Nightlife & Entertainment</option>
+                  <option>Photography Tours</option>
+                  <option>Spiritual & Wellness</option>
+                </select>
+              </div>
+              <div class="field-error">Please select an area.</div>
+            </div>
+
+            <label class="check-label" style="margin-bottom:20px;display:flex;align-items:flex-start;gap:10px;">
+              <input type="checkbox" class="check-box" id="s-terms" style="margin-top:2px;" />
+              <span style="font-size:12px;color:var(--muted);line-height:1.5;">I agree to the <a href="#" style="color:var(--amber);">Terms of Service</a> and <a href="#" style="color:var(--amber);">Privacy Policy</a>. I confirm I'm 18 years or older.</span>
+            </label>
+            <div class="field-error" id="e-terms" style="display:none;margin-top:-14px;margin-bottom:16px;">Please accept the terms.</div>
+
+            <div style="display:flex;gap:10px;">
+              <button type="button" class="btn-sm btn-sm-outline" onclick="prevStep()" style="padding:14px 20px;">← Back</button>
+              <button type="submit" class="btn-primary" style="flex:1;">Create Account 🚀</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="switch-link">
+          Already have an account? <a href="#" onclick="showPage('page-login')">Sign in →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========================
+     PAGE: DASHBOARD
+     ======================== -->
+<div class="page" id="page-dashboard" style="flex-direction:column;">
+  <div class="dash-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">✈️</div>
+          <div class="sidebar-logo-name">MEETLOCAL</div>
+        </div>
+        <div class="sidebar-profile">
+          <div class="avatar">A</div>
+          <div>
+            <div class="avatar-name">Arjun Sharma</div>
+            <div class="avatar-role">🌟 Top Host · Chennai</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Main</div>
+        <div class="nav-item active" onclick="setNav(this)">
+          <span class="nav-icon">🏠</span> Overview
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">📅</span> Bookings
+          <span class="nav-badge">3</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">🗺️</span> My Tours
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">💬</span> Messages
+          <span class="nav-badge">7</span>
+        </div>
+
+        <div class="nav-section-label">Earnings</div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">💰</span> Earnings
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">📊</span> Analytics
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">🧾</span> Payouts
+        </div>
+
+        <div class="nav-section-label">Account</div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">👤</span> Profile
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">⚙️</span> Settings
+        </div>
+        <div class="nav-item" onclick="setNav(this)">
+          <span class="nav-icon">🛡️</span> Verification
+        </div>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="btn-logout" onclick="showPage('page-login')">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="dash-main">
+      <!-- Header -->
+      <div class="dash-header">
+        <div class="dash-greeting">
+          <div class="greeting-time" id="greeting-time">GOOD MORNING · THU, 23 APR 2026</div>
+          <div class="greeting-text">Hello, Arjun 👋</div>
+          <div class="greeting-sub">You have 3 new bookings and 7 unread messages today.</div>
+        </div>
+        <div class="dash-actions">
+          <button class="btn-sm btn-sm-outline">📋 View Reports</button>
+          <button class="btn-sm btn-sm-fill" onclick="showToast('New tour listing created!','success')">+ Add New Tour</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card c1">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-val">₹48,320</div>
+          <div class="stat-card-lbl">Total Earnings (Apr)</div>
+          <div class="stat-card-change change-up">▲ 18.4% vs last month</div>
+        </div>
+        <div class="stat-card c2">
+          <div class="stat-card-icon">🎫</div>
+          <div class="stat-card-val">34</div>
+          <div class="stat-card-lbl">Bookings This Month</div>
+          <div class="stat-card-change change-up">▲ 9 new this week</div>
+        </div>
+        <div class="stat-card c3">
+          <div class="stat-card-icon">⭐</div>
+          <div class="stat-card-val">4.92</div>
+          <div class="stat-card-lbl">Average Rating</div>
+          <div class="stat-card-change change-up">▲ Top 5% of hosts</div>
+        </div>
+        <div class="stat-card c4">
+          <div class="stat-card-icon">👥</div>
+          <div class="stat-card-val">218</div>
+          <div class="stat-card-lbl">Travelers Hosted</div>
+          <div class="stat-card-change change-down">▼ 2 cancellations</div>
+        </div>
+      </div>
+
+      <!-- Two columns -->
+      <div class="dash-cols">
+        <!-- Upcoming Bookings -->
+        <div>
+          <div class="dash-card" style="margin-bottom:20px;">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Upcoming Bookings</div>
+              <div class="see-all" onclick="showToast('Opening all bookings…')">See all →</div>
+            </div>
+
+            <div class="trip-item">
+              <div class="trip-icon c1">🏯</div>
+              <div class="trip-info">
+                <div class="trip-title">Heritage Walk — Fort St. George</div>
+                <div class="trip-meta">📅 Apr 25 · 9:00 AM · 4 guests</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="trip-price">₹3,200</div>
+                <div class="trip-status status-confirmed">Confirmed</div>
+              </div>
+            </div>
+
+            <div class="trip-item">
+              <div class="trip-icon c2">🍛</div>
+              <div class="trip-info">
+                <div class="trip-title">Street Food & Market Tour</div>
+                <div class="trip-meta">📅 Apr 26 · 7:00 AM · 6 guests</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="trip-price">₹5,400</div>
+                <div class="trip-status status-confirmed">Confirmed</div>
+              </div>
+            </div>
+
+            <div class="trip-item">
+              <div class="trip-icon c3">🌅</div>
+              <div class="trip-info">
+                <div class="trip-title">Marina Beach Sunrise Experience</div>
+                <div class="trip-meta">📅 Apr 28 · 5:30 AM · 2 guests</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="trip-price">₹1,800</div>
+                <div class="trip-status status-pending">Pending</div>
+              </div>
+            </div>
+
+            <div class="trip-item">
+              <div class="trip-icon c4">🎨</div>
+              <div class="trip-info">
+                <div class="trip-title">Mylapore Temple Art Walk</div>
+                <div class="trip-meta">📅 May 2 · 10:00 AM · 5 guests</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+                <div class="trip-price">₹4,500</div>
+                <div class="trip-status status-upcoming">Upcoming</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Earnings Chart -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Monthly Earnings</div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn-sm btn-sm-outline" style="padding:6px 12px;font-size:11px;">2026</button>
+              </div>
+            </div>
+            <div class="chart-area">
+              <div class="chart-bars" id="chart-bars">
+                <!-- Generated by JS -->
+              </div>
+              <div style="display:flex;justify-content:space-between;padding:0 4px;">
+                <span style="font-size:10px;color:var(--muted);">₹0</span>
+                <span style="font-size:11px;color:var(--muted);font-family:var(--font-mono);">Total: ₹2,84,760</span>
+                <span style="font-size:10px;color:var(--muted);">₹60K</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Notifications -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Notifications</div>
+              <div class="see-all">Mark all read</div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot"></div>
+              <div>
+                <div class="notif-text">New booking by <strong>Priya M.</strong> for Heritage Walk on Apr 25.</div>
+                <div class="notif-time">2 min ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot"></div>
+              <div>
+                <div class="notif-text"><strong>Rahul K.</strong> left you a 5-star review! 🌟</div>
+                <div class="notif-time">1 hr ago</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot read"></div>
+              <div>
+                <div class="notif-text">Your payout of ₹12,400 has been processed.</div>
+                <div class="notif-time">Yesterday</div>
+              </div>
+            </div>
+            <div class="notif-item">
+              <div class="notif-dot read"></div>
+              <div>
+                <div class="notif-text">Smileytrips featured your tour in this week's newsletter!</div>
+                <div class="notif-time">2 days ago</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile completion -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Profile Health</div>
+            </div>
+            <div class="progress-row">
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width:78%;"></div>
+              </div>
+              <div class="progress-pct">78%</div>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Add a bio and 2 more photos to reach 100%</div>
+            <button class="btn-sm btn-sm-outline" style="width:100%;padding:10px;" onclick="showToast('Opening profile editor…')">Complete Profile →</button>
+
+            <div style="margin-top:18px;">
+              <div style="font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;">Your Badges</div>
+              <div class="badge-row">
+                <div class="badge badge-earned">🏅 Top Host</div>
+                <div class="badge badge-earned">⭐ 5-Star</div>
+                <div class="badge badge-earned">🚀 100+ Trips</div>
+                <div class="badge badge-locked">🔒 Superhost</div>
+                <div class="badge badge-locked">🔒 Ambassador</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top tours -->
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title">Top Tours</div>
+            </div>
+            <div class="dest-list-item">
+              <div class="dest-rank">#1</div>
+              <div class="dest-list-name">Heritage Walk</div>
+              <div class="dest-bar-wrap"><div class="dest-bar"><div class="dest-bar-fill" style="width:90%;"></div></div></div>
+              <div class="dest-bookings">18</div>
+            </div>
+            <div class="dest-list-item">
+              <div class="dest-rank">#2</div>
+              <div class="dest-list-name">Street Food Tour</div>
+              <div class="dest-bar-wrap"><div class="dest-bar"><div class="dest-bar-fill" style="width:70%;"></div></div></div>
+              <div class="dest-bookings">14</div>
+            </div>
+            <div class="dest-list-item">
+              <div class="dest-rank">#3</div>
+              <div class="dest-list-name">Marina Sunrise</div>
+              <div class="dest-bar-wrap"><div class="dest-bar"><div class="dest-bar-fill" style="width:45%;"></div></div></div>
+              <div class="dest-bookings">9</div>
+            </div>
+            <div class="dest-list-item">
+              <div class="dest-rank">#4</div>
+              <div class="dest-list-name">Mylapore Art Walk</div>
+              <div class="dest-bar-wrap"><div class="dest-bar"><div class="dest-bar-fill" style="width:30%;"></div></div></div>
+              <div class="dest-bookings">6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile nav -->
+  <div class="mobile-nav-bar">
+    <div class="mob-nav-item active"><div class="mob-nav-icon">🏠</div><div class="mob-nav-lbl">Home</div></div>
+    <div class="mob-nav-item"><div class="mob-nav-icon">📅</div><div class="mob-nav-lbl">Bookings</div></div>
+    <div class="mob-nav-item"><div class="mob-nav-icon">🗺️</div><div class="mob-nav-lbl">Tours</div></div>
+    <div class="mob-nav-item"><div class="mob-nav-icon">💬</div><div class="mob-nav-lbl">Chat</div></div>
+    <div class="mob-nav-item"><div class="mob-nav-icon">👤</div><div class="mob-nav-lbl">Profile</div></div>
+  </div>
+</div>
+
+
+<script>
+/* ===== INIT ===== */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const l = document.getElementById('loader');
+    l.style.opacity = '0';
+    setTimeout(() => l.style.display = 'none', 500);
+  }, 800);
+  generateStars('stars-login');
+  generateStars('stars-signup');
+  buildChart();
+  setGreeting();
+});
+
+/* ===== STARS ===== */
+function generateStars(id) {
+  const container = document.getElementById(id);
+  if (!container) return;
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --dur:${2+Math.random()*4}s;
+      --delay:-${Math.random()*4}s;
+      width:${Math.random()>0.8?3:2}px;
+      height:${Math.random()>0.8?3:2}px;
+    `;
+    container.appendChild(s);
+  }
+}
+
+/* ===== PAGE NAVIGATION ===== */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(id);
+  if (page) page.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ===== TAB SWITCH ===== */
+function switchTab(btn, type) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ===== PASSWORD TOGGLE ===== */
+function togglePw(fieldId, btn) {
+  const f = document.getElementById(fieldId);
+  if (f.type === 'password') { f.type = 'text'; btn.textContent = '🔒'; }
+  else { f.type = 'password'; btn.textContent = '👁'; }
+}
+
+/* ===== TOAST ===== */
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type !== 'info' ? ' '+type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ===== FORM VALIDATION ===== */
+function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+function setError(id, show) {
+  const f = document.getElementById(id);
+  if (f) f.classList.toggle('error', show);
+}
+
+/* ===== LOGIN ===== */
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const pw = document.getElementById('login-pw').value;
+  let valid = true;
+  if (!validateEmail(email)) { setError('f-email', true); valid = false; } else setError('f-email', false);
+  if (!pw) { setError('f-password', true); valid = false; } else setError('f-password', false);
+  if (!valid) return;
+
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Signing in…';
+  btn.classList.add('btn-loading');
+  setTimeout(() => {
+    btn.textContent = 'Log In to Dashboard →';
+    btn.classList.remove('btn-loading');
+    showToast('Welcome back, Arjun! 🎉', 'success');
+    setTimeout(() => showPage('page-dashboard'), 600);
+  }, 1400);
+}
+
+/* ===== SIGNUP STEPS ===== */
+let currentStep = 1;
+function nextStep(e) {
+  e.preventDefault();
+  const fname = document.getElementById('s-fname').value.trim();
+  const lname = document.getElementById('s-lname').value.trim();
+  const email = document.getElementById('s-email').value.trim();
+  const phone = document.getElementById('s-phone').value.trim();
+  const city  = document.getElementById('s-city').value;
+  let valid = true;
+  if (!fname) { setError('sf-fname',true); valid=false; } else setError('sf-fname',false);
+  if (!lname) { setError('sf-lname',true); valid=false; } else setError('sf-lname',false);
+  if (!validateEmail(email)) { setError('sf-semail',true); valid=false; } else setError('sf-semail',false);
+  if (phone.replace(/\D/g,'').length < 10) { setError('sf-phone',true); valid=false; } else setError('sf-phone',false);
+  if (!city) { setError('sf-city',true); valid=false; } else setError('sf-city',false);
+  if (!valid) return;
+
+  document.getElementById('signup-step-1').style.display = 'none';
+  document.getElementById('signup-step-2').style.display = 'block';
+  document.getElementById('step-num').textContent = '2';
+  currentStep = 2;
+  const dots = document.querySelectorAll('.step-dot');
+  dots[0].classList.remove('active'); dots[0].classList.add('done');
+  dots[1].classList.remove('pending'); dots[1].classList.add('active');
+}
+function prevStep() {
+  document.getElementById('signup-step-2').style.display = 'none';
+  document.getElementById('signup-step-1').style.display = 'block';
+  document.getElementById('step-num').textContent = '1';
+  currentStep = 1;
+  const dots = document.querySelectorAll('.step-dot');
+  dots[0].classList.add('active'); dots[0].classList.remove('done');
+  dots[1].classList.add('pending'); dots[1].classList.remove('active');
+}
+function handleSignup(e) {
+  e.preventDefault();
+  const pw = document.getElementById('s-pw').value;
+  const pw2 = document.getElementById('s-pw2').value;
+  const exp = document.getElementById('s-expertise').value;
+  const terms = document.getElementById('s-terms').checked;
+  let valid = true;
+  if (pw.length < 8) { setError('sf-spw',true); valid=false; } else setError('sf-spw',false);
+  if (pw !== pw2) { setError('sf-spw2',true); valid=false; } else setError('sf-spw2',false);
+  if (!exp) { setError('sf-expertise',true); valid=false; } else setError('sf-expertise',false);
+  if (!terms) {
+    document.getElementById('e-terms').style.display = 'block';
+    valid = false;
+  } else document.getElementById('e-terms').style.display = 'none';
+  if (!valid) return;
+
+  showToast('Creating your account… 🚀', 'success');
+  setTimeout(() => {
+    showToast('Account created! Welcome to MeetLocal 🎉', 'success');
+    setTimeout(() => showPage('page-dashboard'), 800);
+  }, 1800);
+}
+
+/* ===== PASSWORD STRENGTH ===== */
+document.addEventListener('input', (e) => {
+  if (e.target.id !== 's-pw') return;
+  const v = e.target.value;
+  let score = 0;
+  if (v.length >= 8) score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  const colors = ['','#ef4444','#f59e0b','#22c55e','#0d9488'];
+  const labels = ['','Weak','Fair','Strong','Very Strong'];
+  for (let i = 1; i <= 4; i++) {
+    const seg = document.getElementById('str-'+i);
+    if (seg) seg.style.background = i <= score ? colors[score] : 'rgba(255,255,255,.08)';
+  }
+  document.getElementById('strength-lbl').textContent = labels[score] || '—';
+});
+
+/* ===== SOCIAL LOGIN ===== */
+function socialLogin(provider) {
+  showToast(`Connecting with ${provider}…`);
+  setTimeout(() => showToast(`${provider} auth successful! 🎉`, 'success'), 1200);
+  setTimeout(() => showPage('page-dashboard'), 2500);
+}
+
+/* ===== NAV ===== */
+function setNav(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ===== GREETING ===== */
+function setGreeting() {
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'GOOD MORNING' : h < 17 ? 'GOOD AFTERNOON' : 'GOOD EVENING';
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const d = new Date();
+  const el = document.getElementById('greeting-time');
+  if (el) el.textContent = `${greet} · ${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/* ===== EARNINGS CHART ===== */
+function buildChart() {
+  const data = [
+    { m:'Jan', v:32000 }, { m:'Feb', v:28000 }, { m:'Mar', v:41000 },
+    { m:'Apr', v:48320 }, { m:'May', v:0 }, { m:'Jun', v:0 },
+    { m:'Jul', v:0 }, { m:'Aug', v:0 }, { m:'Sep', v:0 },
+    { m:'Oct', v:0 }, { m:'Nov', v:0 }, { m:'Dec', v:0 }
+  ];
+  const max = 60000;
+  const container = document.getElementById('chart-bars');
+  if (!container) return;
+  const colors = ['var(--amber)','var(--teal)','var(--coral)','var(--amber)'];
+
+  data.forEach((d, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'chart-bar-wrap';
+    const pct = d.v ? Math.round((d.v/max)*100) : 0;
+    const isActive = i === 3;
+    const color = isActive ? 'linear-gradient(180deg,var(--amber),var(--gold))' : d.v ? 'rgba(255,255,255,.15)' : 'rgba(255,255,255,.04)';
+    wrap.innerHTML = `
+      <div class="chart-bar-bg" style="height:100%;flex:1;display:flex;align-items:flex-end;">
+        <div class="chart-bar-fill" style="width:100%;height:0%;background:${color};${isActive?'box-shadow:0 0 12px rgba(245,166,35,.4);':''}" data-pct="${pct}"></div>
+      </div>
+      <div class="chart-bar-lbl">${d.m}</div>
+    `;
+    container.appendChild(wrap);
+  });
+
+  // Animate bars in
+  setTimeout(() => {
+    document.querySelectorAll('.chart-bar-fill').forEach(b => {
+      b.style.height = b.dataset.pct + '%';
+    });
+  }, 300);
+}
+
+/* ===== FORGOT PAGE (inline inline) ===== */
+/* Clicking forgot password shows a toast for demo */
+document.querySelectorAll('.forgot-link').forEach(el => {
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    showToast('Password reset email sent! Check your inbox 📧');
+  });
+});
+
+/* ===== INPUT CLEAR ERRORS ON TYPE ===== */
+document.addEventListener('input', (e) => {
+  if (e.target.classList.contains('field-input') || e.target.classList.contains('field-select')) {
+    const field = e.target.closest('.field');
+    if (field) field.classList.remove('error');
+  }
+});
+</script>
+</body>
+</html>
